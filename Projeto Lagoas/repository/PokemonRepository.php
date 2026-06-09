@@ -3,7 +3,7 @@
 require_once __DIR__ . '/../config/database.php';
 require_once __DIR__ . '/../entity/Pokemon.php';
 
-class PokemonRepository {
+class FilmeRepository {
 
     private PDO $pdo;
 
@@ -14,19 +14,24 @@ class PokemonRepository {
     /** @return Pokemon[] */
     public function listarPorUsuario(int $usuarioId): array {
         $stmt = $this->pdo->prepare(
-            'SELECT * FROM pokemon WHERE usuario_id = :uid ORDER BY nome ASC'
+            'SELECT * FROM pokemon WHERE usuario_id = :uid ORDER BY nivel DESC, nome ASC'
         );
         $stmt->execute([':uid' => $usuarioId]);
+
         $lista = [];
         foreach ($stmt->fetchAll() as $dados) {
             $lista[] = new Pokemon($dados);
         }
+
         return $lista;
     }
 
     public function buscarPorId(int $id): ?Pokemon {
-        $stmt = $this->pdo->prepare('SELECT * FROM pokemon WHERE id = :id LIMIT 1');
+        $stmt = $this->pdo->prepare(
+            'SELECT * FROM pokemon WHERE id = :id LIMIT 1'
+        );
         $stmt->execute([':id' => $id]);
+
         $dados = $stmt->fetch();
 
         if ($dados) {
@@ -37,26 +42,38 @@ class PokemonRepository {
     }
 
     public function salvar(Pokemon $pokemon): void {
+        // Se já possui ID, atualiza o registro
         if ($pokemon->getId() > 0) {
             $stmt = $this->pdo->prepare(
-                'UPDATE pokemon SET nome = :nome, tipo = :tipo, nivel = :nivel WHERE id = :id'
+                'UPDATE pokemon
+                 SET nome = :nome,
+                     tipo = :tipo,
+                     nivel = :nivel
+                 WHERE id = :id'
             );
+
             $stmt->execute([
                 ':nome'  => $pokemon->getNome(),
                 ':tipo'  => $pokemon->getTipo(),
                 ':nivel' => $pokemon->getNivel(),
                 ':id'    => $pokemon->getId(),
             ]);
+
             return;
         }
 
+        // Se não possui ID, insere um novo registro
         if ($pokemon->getUsuarioId() <= 0) {
             throw new InvalidArgumentException('Usuário inválido.');
         }
 
         $stmt = $this->pdo->prepare(
-            'INSERT INTO pokemon (nome, tipo, nivel, usuario_id) VALUES (:nome, :tipo, :nivel, :uid)'
+            'INSERT INTO pokemon
+             (nome, tipo, nivel, usuario_id)
+             VALUES
+             (:nome, :tipo, :nivel, :uid)'
         );
+
         $stmt->execute([
             ':nome'  => $pokemon->getNome(),
             ':tipo'  => $pokemon->getTipo(),
@@ -64,19 +81,31 @@ class PokemonRepository {
             ':uid'   => $pokemon->getUsuarioId(),
         ]);
 
-        $pokemon->registrarIdGerado((int) $this->pdo->lastInsertId());
+        $pokemon->registrarIdGerado(
+            (int) $this->pdo->lastInsertId()
+        );
     }
 
-    public function inserir(string $nome, string $tipo, int $nivel, int $usuarioId): void {
+    public function inserir(
+        string $nome,
+        string $tipo,
+        float $nivel,
+        int $usuarioId
+    ): void {
         $pokemon = Pokemon::novo($nome, $tipo, $nivel, $usuarioId);
         $this->salvar($pokemon);
     }
 
-    public function atualizar(int $id, string $nome, string $tipo, int $nivel): void {
+    public function atualizar(
+        int $id,
+        string $nome,
+        string $tipo,
+        float $nivel
+    ): void {
         $pokemon = $this->buscarPorId($id);
 
         if ($pokemon === null) {
-            throw new RuntimeException('Pokémon não encontrado.');
+            throw new RuntimeException('Filme ou série não encontrado.');
         }
 
         $pokemon->alterarDados($nome, $tipo, $nivel);
@@ -84,7 +113,10 @@ class PokemonRepository {
     }
 
     public function excluir(int $id): void {
-        $stmt = $this->pdo->prepare('DELETE FROM pokemon WHERE id = :id');
+        $stmt = $this->pdo->prepare(
+            'DELETE FROM pokemon WHERE id = :id'
+        );
+
         $stmt->execute([':id' => $id]);
     }
 }

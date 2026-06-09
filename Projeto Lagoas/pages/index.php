@@ -2,9 +2,9 @@
 <?php
 
 require_once __DIR__ . '/../includes/auth.php';
-require_once __DIR__ . '/../repository/PokemonRepository.php';
+require_once __DIR__ . '/../repository/FilmeRepository.php';
 
-$repo     = new PokemonRepository();
+$repo = new FilmeRepository();
 $pokemons = $repo->listarPorUsuario($_SESSION['usuario_id']);
 
 require_once __DIR__ . '/../includes/header.php';
