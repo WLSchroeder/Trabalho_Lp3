@@ -3,6 +3,7 @@
 --  Execute este arquivo no phpMyAdmin ou via terminal MySQL
 -- ============================================================
 
+
 CREATE DATABASE IF NOT EXISTS crud_pokemon
   CHARACTER SET utf8mb4
   COLLATE utf8mb4_unicode_ci;
@@ -29,7 +30,7 @@ CREATE TABLE IF NOT EXISTS pokemon (
     id         INT          NOT NULL AUTO_INCREMENT,
     nome       VARCHAR(100) NOT NULL,
     tipo       VARCHAR(50)  NOT NULL,
-    nivel      INT          NOT NULL DEFAULT 1,
+    nivel DECIMAL(3,1) NOT NULL,
     usuario_id INT          NOT NULL,
     PRIMARY KEY (id),
     CONSTRAINT fk_pokemon_usuario
@@ -53,6 +54,8 @@ INSERT INTO usuario (nome, email, senha) VALUES
 --  Pokémons de exemplo vinculados ao usuário acima (id=1)
 -- ------------------------------------------------------------
 INSERT INTO pokemon (nome, tipo, nivel, usuario_id) VALUES
-    ('Pikachu',    'Elétrico', 35, 1),
-    ('Charmander', 'Fogo',     20, 1),
-    ('Squirtle',   'Água',     18, 1);
+    ('Interestelar',            'Ficção Científica', 9.5, 1),
+    ('Breaking Bad',            'Drama',             10.0, 1),
+    ('The Dark Knight',         'Ação',              9.8, 1),
+    ('Stranger Things',         'Suspense',          8.9, 1),
+    ('O Poderoso Chefão',       'Crime',             10.0, 1);

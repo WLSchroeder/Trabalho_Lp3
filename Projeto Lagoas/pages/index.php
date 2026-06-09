@@ -1,3 +1,4 @@
+
 <?php
 
 require_once __DIR__ . '/../includes/auth.php';
@@ -10,13 +11,13 @@ require_once __DIR__ . '/../includes/header.php';
 ?>
 
 <div class="page-header">
-  <h2>Meus Pokémons</h2>
-  <a href="pokemon_create.php" class="btn btn-primary">+ Novo Pokémon</a>
+  <h2>Meus Filmes e Séries</h2>
+  <a href="pokemon_create.php" class="btn btn-primary">+ Novo Filme</a>
 </div>
 
 <?php if (empty($pokemons)): ?>
   <div class="empty-state">
-    <p>Você ainda não cadastrou nenhum pokémon.</p>
+    <p>Você ainda não cadastrou nenhum filme ou série!</p>
     <a href="pokemon_create.php" class="btn btn-primary">Cadastrar agora</a>
   </div>
 <?php else: ?>
@@ -25,10 +26,10 @@ require_once __DIR__ . '/../includes/header.php';
       <thead>
         <tr>
           <th>#</th>
-          <th>Nome</th>
-          <th>Tipo</th>
-          <th>Nível</th>
-          <th>Ações</th>
+          <th>Título</th>
+          <th>Gênero</th>
+          <th>Nota</th>
+          <th>Data</th>
         </tr>
       </thead>
       <tbody>

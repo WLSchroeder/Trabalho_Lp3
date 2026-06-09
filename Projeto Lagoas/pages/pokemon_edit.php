@@ -5,17 +5,10 @@ require_once __DIR__ . '/../repository/PokemonRepository.php';
 
 $repo = new PokemonRepository();
 
-$id = 0;
-if (isset($_GET['id'])) {
-    $id = (int) $_GET['id'];
-}
+$id = (int) ($_GET['id'] ?? 0);
+$pokemon = $repo->buscarPorId($id, $_SESSION['usuario_id']);
 
-$pokemon = null;
-if ($id > 0) {
-    $pokemon = $repo->buscarPorId($id);
-}
-
-if ($pokemon === null || $pokemon->getUsuarioId() !== $_SESSION['usuario_id']) {
+if (!$pokemon) {
     header('Location: index.php');
     exit;
 }
@@ -25,9 +18,22 @@ $nome = $pokemon->getNome();
 $tipo = $pokemon->getTipo();
 $nivel = $pokemon->getNivel();
 
-$tipos = ['Fogo', 'Água', 'Planta', 'Elétrico', 'Terra', 'Voador',
-          'Psíquico', 'Gelo', 'Lutador', 'Venenoso', 'Normal', 'Fantasma',
-          'Dragão', 'Pedra', 'Aço', 'Fada'];
+$tipos = [
+    'Ação',
+    'Aventura',
+    'Animação',
+    'Comédia',
+    'Crime',
+    'Documentário',
+    'Drama',
+    'Fantasia',
+    'Ficção Científica',
+    'Mistério',
+    'Romance',
+    'Suspense',
+    'Terror'
+];
+
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $nome  = trim($_POST['nome'] ?? '');
@@ -49,7 +55,7 @@ require_once __DIR__ . '/../includes/header.php';
 ?>
 
 <div class="page-header">
-  <h2>Editar Pokémon</h2>
+  <h2>Editar Filme ou Série</h2>
   <a href="index.php" class="btn btn-ghost">← Voltar</a>
 </div>
 
@@ -61,7 +67,7 @@ require_once __DIR__ . '/../includes/header.php';
   <form method="POST" action="pokemon_edit.php?id=<?= $pokemon->getId() ?>">
 
     <div class="form-group">
-      <label for="nome">Nome do Pokémon</label>
+      <label for="nome">Título</label>
       <input
         type="text"
         id="nome"
@@ -73,9 +79,9 @@ require_once __DIR__ . '/../includes/header.php';
     </div>
 
     <div class="form-group">
-      <label for="tipo">Tipo</label>
+      <label for="tipo">Gênero</label>
       <select id="tipo" name="tipo" required>
-        <option value="">Selecione o tipo...</option>
+        <option value="">Selecione o Gênero...</option>
         <?php foreach ($tipos as $t): ?>
           <?php
             $selecionado = '';
@@ -91,13 +97,14 @@ require_once __DIR__ . '/../includes/header.php';
     </div>
 
     <div class="form-group">
-      <label for="nivel">Nível (1 – 100)</label>
+      <label for="nivel">Nível (1 – 10)</label>
       <input
         type="number"
         id="nivel"
         name="nivel"
-        min="1"
-        max="100"
+        min="0"
+        max="10"
+        step="0.1"
         value="<?= $nivel ?>"
         required
       />

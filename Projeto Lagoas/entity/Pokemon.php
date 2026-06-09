@@ -3,26 +3,26 @@
 class Pokemon {
 
     private int    $id;
-    private string $nome;
-    private string $tipo;
-    private int    $nivel;
+    private string $nome;       // Título do filme ou série
+    private string $tipo;       // Gênero
+    private float  $nivel;      // Nota (1 a 10)
     private int    $usuarioId;
 
     public function __construct(array $dados) {
         $this->id        = (int) ($dados['id']        ?? 0);
         $this->nome      =        $dados['nome']       ?? '';
         $this->tipo      =        $dados['tipo']       ?? '';
-        $this->nivel     = (int) ($dados['nivel']      ?? 1);
+        $this->nivel = (float) ($dados['nivel'] ?? 1.0);
         $this->usuarioId = (int) ($dados['usuario_id'] ?? 0);
     }
 
     public function getId():        int    { return $this->id; }
     public function getNome():      string { return $this->nome; }
     public function getTipo():      string { return $this->tipo; }
-    public function getNivel():     int    { return $this->nivel; }
+    public function getNivel():     float    { return $this->nivel; }
     public function getUsuarioId(): int    { return $this->usuarioId; }
 
-    public static function novo(string $nome, string $tipo, int $nivel, int $usuarioId): Pokemon {
+    public static function novo(string $nome, string $tipo, float $nivel, int $usuarioId): Pokemon {
         if ($usuarioId <= 0) {
             throw new InvalidArgumentException('Usuário inválido.');
         }
@@ -33,16 +33,16 @@ class Pokemon {
         return $pokemon;
     }
 
-    public function alterarDados(string $nome, string $tipo, int $nivel): void {
+    public function alterarDados(string $nome, string $tipo, float $nivel): void {
         $nome = trim($nome);
         $tipo = trim($tipo);
 
         if ($nome === '' || $tipo === '') {
-            throw new InvalidArgumentException('Nome e tipo são obrigatórios.');
+            throw new InvalidArgumentException('Título e Gênero são obrigatórios.');
         }
 
-        if ($nivel < 1 || $nivel > 100) {
-            throw new InvalidArgumentException('O nível deve ser entre 1 e 100.');
+        if ($nivel < 0 || $nivel > 10) {
+            throw new InvalidArgumentException('A nota deve ser entre 1 e 10.');
         }
 
         $this->nome  = $nome;

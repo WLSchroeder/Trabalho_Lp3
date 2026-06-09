@@ -41,14 +41,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Login — PokéCRUD</title>
+  <title>Login — CineRank</title>
   <link rel="stylesheet" href="../assets/style.css" />
 </head>
 <body class="login-body">
 
 <div class="login-card">
-  <div class="login-logo">PokéCRUD</div>
+  <div class="login-logo">CineRank</div>
   <h1 class="login-title">Entrar no sistema</h1>
+  <p style="text-align: center; margin-bottom: 1.5rem; color: #666;">
+    Organize, avalie e ranqueie seus filmes e séries favoritos.
+  </p>
+
 
   <?php if ($erro !== ''): ?>
     <div class="alert alert-erro"><?= htmlspecialchars($erro) ?></div>
@@ -80,6 +84,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     <button type="submit" class="btn btn-primary btn-full">Entrar</button>
   </form>
+  <p style="text-align: center; margin-top: 1.5rem; color: #888; font-size: 0.9rem;">
+    Seu catálogo pessoal de filmes e séries.
+  </p>
 
 </div>
 
