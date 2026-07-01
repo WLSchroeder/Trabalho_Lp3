@@ -1,28 +1,28 @@
 <?php
 
 require_once __DIR__ . '/../includes/auth.php';
-require_once __DIR__ . '/../repository/PokemonRepository.php';
+require_once __DIR__ . '/../repository/FilmeRepository.php';
 
-$repo = new PokemonRepository();
+$repo = new FilmeRepository();
 
 $id = 0;
 if (isset($_GET['id'])) {
     $id = (int) $_GET['id'];
 }
 
-$pokemon = null;
+$filme = null;
 if ($id > 0) {
-    $pokemon = $repo->buscarPorId($id);
+    $filme = $repo->buscarPorId($id, $_SESSION['usuario_id']);
 }
 
-// Pokémon não encontrado ou não pertence ao usuário logado
-if ($pokemon === null || $pokemon->getUsuarioId() !== $_SESSION['usuario_id']) {
+// Filme não encontrado ou não pertence ao usuário logado
+if ($filme === null) {
     header('Location: index.php');
     exit;
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $repo->excluir($pokemon->getId());
+    $repo->excluir($filme->getId());
     header('Location: index.php');
     exit;
 }
@@ -38,14 +38,13 @@ require_once __DIR__ . '/../includes/header.php';
 <div class="confirm-card">
   <h3>Você tem certeza?</h3>
   <p style="margin-bottom: 2rem; color: #666;">
-    Esta ação não poderá ser desfeita.>
-    Você está prestes a excluir o pokémon
-    <strong><?= htmlspecialchars($pokemon->getNome()) ?></strong>
-    (<?= htmlspecialchars($pokemon->getTipo()) ?>, Lv. <?= $pokemon->getNivel() ?>).
+    Você está prestes a excluir o filme
+    <strong><?= htmlspecialchars($filme->getNome()) ?></strong>
+    (<?= htmlspecialchars($filme->getGeneroNome()) ?>, Lv. <?= $filme->getNivel() ?>).
     Esta ação não pode ser desfeita.
   </p>
 
-  <form method="POST" action="pokemon_delete.php?id=<?= $pokemon->getId() ?>">
+  <form method="POST" action="filme_delete.php?id=<?= $filme->getId() ?>">
     <div class="form-actions">
       <button type="submit" class="btn btn-excluir">Sim, excluir</button>
       <a href="index.php" class="btn btn-ghost">Cancelar</a>

@@ -1,7 +1,8 @@
 <?php
 
 require_once __DIR__ . '/../config/database.php';
-require_once __DIR__ . '/../entity/Pokemon.php';
+require_once __DIR__ . '/../entity/Filme.php';
+require_once __DIR__ . '/../entity/Tag.php';
 
 class FilmeRepository {
 
@@ -11,112 +12,169 @@ class FilmeRepository {
         $this->pdo = getConexao();
     }
 
-    /** @return Pokemon[] */
+    private const SELECT_BASE = '
+        SELECT f.*, g.nome AS genero_nome
+        FROM filme f
+        JOIN genero g ON g.id = f.genero_id
+    ';
+
+    /** @return Filme[] */
     public function listarPorUsuario(int $usuarioId): array {
         $stmt = $this->pdo->prepare(
-            'SELECT * FROM pokemon WHERE usuario_id = :uid ORDER BY nivel DESC, nome ASC'
+            self::SELECT_BASE . ' WHERE f.usuario_id = :uid ORDER BY f.nivel DESC, f.nome ASC'
         );
         $stmt->execute([':uid' => $usuarioId]);
 
         $lista = [];
         foreach ($stmt->fetchAll() as $dados) {
-            $lista[] = new Pokemon($dados);
+            $lista[] = new Filme($dados);
         }
 
         return $lista;
     }
 
-    public function buscarPorId(int $id): ?Pokemon {
+    public function buscarPorId(int $id, int $usuarioId): ?Filme {
         $stmt = $this->pdo->prepare(
-            'SELECT * FROM pokemon WHERE id = :id LIMIT 1'
+            self::SELECT_BASE . ' WHERE f.id = :id AND f.usuario_id = :uid LIMIT 1'
         );
-        $stmt->execute([':id' => $id]);
+        $stmt->execute([':id' => $id, ':uid' => $usuarioId]);
 
         $dados = $stmt->fetch();
 
         if ($dados) {
-            return new Pokemon($dados);
+            return new Filme($dados);
         }
 
         return null;
     }
 
-    public function salvar(Pokemon $pokemon): void {
+    public function salvar(Filme $filme): void {
         // Se já possui ID, atualiza o registro
-        if ($pokemon->getId() > 0) {
+        if ($filme->getId() > 0) {
             $stmt = $this->pdo->prepare(
-                'UPDATE pokemon
+                'UPDATE filme
                  SET nome = :nome,
-                     tipo = :tipo,
+                     genero_id = :genero_id,
                      nivel = :nivel
                  WHERE id = :id'
             );
 
             $stmt->execute([
-                ':nome'  => $pokemon->getNome(),
-                ':tipo'  => $pokemon->getTipo(),
-                ':nivel' => $pokemon->getNivel(),
-                ':id'    => $pokemon->getId(),
+                ':nome'      => $filme->getNome(),
+                ':genero_id' => $filme->getGeneroId(),
+                ':nivel'     => $filme->getNivel(),
+                ':id'        => $filme->getId(),
             ]);
 
             return;
         }
 
         // Se não possui ID, insere um novo registro
-        if ($pokemon->getUsuarioId() <= 0) {
+        if ($filme->getUsuarioId() <= 0) {
             throw new InvalidArgumentException('Usuário inválido.');
         }
 
         $stmt = $this->pdo->prepare(
-            'INSERT INTO pokemon
-             (nome, tipo, nivel, usuario_id)
+            'INSERT INTO filme
+             (nome, genero_id, nivel, usuario_id)
              VALUES
-             (:nome, :tipo, :nivel, :uid)'
+             (:nome, :genero_id, :nivel, :uid)'
         );
 
         $stmt->execute([
-            ':nome'  => $pokemon->getNome(),
-            ':tipo'  => $pokemon->getTipo(),
-            ':nivel' => $pokemon->getNivel(),
-            ':uid'   => $pokemon->getUsuarioId(),
+            ':nome'      => $filme->getNome(),
+            ':genero_id' => $filme->getGeneroId(),
+            ':nivel'     => $filme->getNivel(),
+            ':uid'       => $filme->getUsuarioId(),
         ]);
 
-        $pokemon->registrarIdGerado(
+        $filme->registrarIdGerado(
             (int) $this->pdo->lastInsertId()
         );
     }
 
     public function inserir(
         string $nome,
-        string $tipo,
+        int $generoId,
         float $nivel,
         int $usuarioId
     ): void {
-        $pokemon = Pokemon::novo($nome, $tipo, $nivel, $usuarioId);
-        $this->salvar($pokemon);
+        $filme = Filme::novo($nome, $generoId, $nivel, $usuarioId);
+        $this->salvar($filme);
     }
 
     public function atualizar(
         int $id,
         string $nome,
-        string $tipo,
-        float $nivel
+        int $generoId,
+        float $nivel,
+        int $usuarioId
     ): void {
-        $pokemon = $this->buscarPorId($id);
+        $filme = $this->buscarPorId($id, $usuarioId);
 
-        if ($pokemon === null) {
+        if ($filme === null) {
             throw new RuntimeException('Filme ou série não encontrado.');
         }
 
-        $pokemon->alterarDados($nome, $tipo, $nivel);
-        $this->salvar($pokemon);
+        $filme->alterarDados($nome, $generoId, $nivel);
+        $this->salvar($filme);
     }
 
     public function excluir(int $id): void {
         $stmt = $this->pdo->prepare(
-            'DELETE FROM pokemon WHERE id = :id'
+            'DELETE FROM filme WHERE id = :id'
         );
 
         $stmt->execute([':id' => $id]);
+    }
+
+    // ---------------------------------------------------------
+    // Relacionamento N:N com tag (tabela intermediária filme_tag)
+    // ---------------------------------------------------------
+
+    /** @return Tag[] */
+    public function buscarTagsDoFilme(int $filmeId): array {
+        $stmt = $this->pdo->prepare(
+            'SELECT t.*
+             FROM tag t
+             JOIN filme_tag ft ON ft.tag_id = t.id
+             WHERE ft.filme_id = :filme_id
+             ORDER BY t.nome ASC'
+        );
+        $stmt->execute([':filme_id' => $filmeId]);
+
+        $lista = [];
+        foreach ($stmt->fetchAll() as $dados) {
+            $lista[] = new Tag($dados);
+        }
+
+        return $lista;
+    }
+
+    /**
+     * Substitui todas as tags associadas a um filme pela lista informada.
+     * @param int[] $tagIds
+     */
+    public function salvarTagsDoFilme(int $filmeId, array $tagIds): void {
+        $stmtDelete = $this->pdo->prepare('DELETE FROM filme_tag WHERE filme_id = :filme_id');
+        $stmtDelete->execute([':filme_id' => $filmeId]);
+
+        if (empty($tagIds)) {
+            return;
+        }
+
+        $stmtInsert = $this->pdo->prepare(
+            'INSERT INTO filme_tag (filme_id, tag_id) VALUES (:filme_id, :tag_id)'
+        );
+
+        foreach ($tagIds as $tagId) {
+            $tagId = (int) $tagId;
+            if ($tagId > 0) {
+                $stmtInsert->execute([
+                    ':filme_id' => $filmeId,
+                    ':tag_id'   => $tagId,
+                ]);
+            }
+        }
     }
 }

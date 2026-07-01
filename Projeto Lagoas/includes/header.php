@@ -14,7 +14,8 @@
 
     <nav class="nav">
       <a href="../pages/index.php">Meus Filmes e Séries</a>
-      <a href="../pages/pokemon_create.php">+ Novo Filme ou Série </a>
+      <a href="../pages/filme_create.php">+ Novo Filme ou Série </a>
+      <a href="../pages/tag_list.php">Tags</a>
     </nav>
 
     <div class="header-user">
