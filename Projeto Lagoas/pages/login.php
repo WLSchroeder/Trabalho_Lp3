@@ -85,7 +85,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <button type="submit" class="btn btn-primary btn-full">Entrar</button>
   </form>
   <p style="text-align: center; margin-top: 1.5rem; color: #888; font-size: 0.9rem;">
-    Seu catálogo pessoal de filmes e séries.
+    Ainda não tem conta? <a href="cadastro.php">Cadastre-se</a>
   </p>
 
 </div>

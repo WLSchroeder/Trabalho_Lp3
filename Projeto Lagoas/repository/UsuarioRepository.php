@@ -22,4 +22,29 @@ class UsuarioRepository {
 
         return null;
     }
+
+    public function existeComEmail(string $email): bool {
+        $stmt = $this->pdo->prepare('SELECT id FROM usuario WHERE email = :email LIMIT 1');
+        $stmt->execute([':email' => $email]);
+
+        return $stmt->fetch() !== false;
+    }
+
+    public function salvar(Usuario $usuario): void {
+        if ($this->existeComEmail($usuario->getEmail())) {
+            throw new InvalidArgumentException('Já existe uma conta cadastrada com esse e-mail.');
+        }
+
+        $stmt = $this->pdo->prepare(
+            'INSERT INTO usuario (nome, email, senha) VALUES (:nome, :email, :senha)'
+        );
+
+        $stmt->execute([
+            ':nome'  => $usuario->getNome(),
+            ':email' => $usuario->getEmail(),
+            ':senha' => $usuario->getSenha(),
+        ]);
+
+        $usuario->registrarIdGerado((int) $this->pdo->lastInsertId());
+    }
 }
