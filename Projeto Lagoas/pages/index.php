@@ -26,6 +26,7 @@ require_once __DIR__ . '/../includes/header.php';
       <thead>
         <tr>
           <th>#</th>
+          <th>Capa</th>
           <th>Título</th>
           <th>Gênero</th>
           <th>Tags</th>
@@ -38,6 +39,17 @@ require_once __DIR__ . '/../includes/header.php';
           <?php $tags = $repo->buscarTagsDoFilme($filme->getId()); ?>
           <tr>
             <td><?= $filme->getId() ?></td>
+            <td>
+              <?php if ($filme->getImagem()): ?>
+                <img
+                  src="../uploads/<?= htmlspecialchars($filme->getImagem()) ?>"
+                  alt="Capa de <?= htmlspecialchars($filme->getNome()) ?>"
+                  style="width:48px; height:64px; object-fit:cover; border-radius:6px; box-shadow: var(--shadow-sm);"
+                />
+              <?php else: ?>
+                <span style="color: var(--text-muted); font-size:.8rem;">—</span>
+              <?php endif; ?>
+            </td>
             <td><strong><?= htmlspecialchars($filme->getNome()) ?></strong></td>
             <td><span class="badge badge-tipo"><?= htmlspecialchars($filme->getGeneroNome()) ?></span></td>
             <td>

@@ -2,6 +2,7 @@
 
 require_once __DIR__ . '/../includes/auth.php';
 require_once __DIR__ . '/../repository/FilmeRepository.php';
+require_once __DIR__ . '/../includes/upload_imagem.php';
 
 $repo = new FilmeRepository();
 
@@ -22,6 +23,7 @@ if ($filme === null) {
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    removerImagem($filme->getImagem());
     $repo->excluir($filme->getId());
     header('Location: index.php');
     exit;
@@ -37,6 +39,15 @@ require_once __DIR__ . '/../includes/header.php';
 
 <div class="confirm-card">
   <h3>Você tem certeza?</h3>
+
+  <?php if ($filme->getImagem()): ?>
+    <img
+      src="../uploads/<?= htmlspecialchars($filme->getImagem()) ?>"
+      alt="Capa"
+      style="width:100px; border-radius: var(--radius); box-shadow: var(--shadow-sm); margin-bottom: 16px;"
+    />
+  <?php endif; ?>
+
   <p style="margin-bottom: 2rem; color: #666;">
     Você está prestes a excluir o filme
     <strong><?= htmlspecialchars($filme->getNome()) ?></strong>

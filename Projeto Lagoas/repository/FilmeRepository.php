@@ -55,7 +55,8 @@ class FilmeRepository {
                 'UPDATE filme
                  SET nome = :nome,
                      genero_id = :genero_id,
-                     nivel = :nivel
+                     nivel = :nivel,
+                     imagem = :imagem
                  WHERE id = :id'
             );
 
@@ -63,6 +64,7 @@ class FilmeRepository {
                 ':nome'      => $filme->getNome(),
                 ':genero_id' => $filme->getGeneroId(),
                 ':nivel'     => $filme->getNivel(),
+                ':imagem'    => $filme->getImagem(),
                 ':id'        => $filme->getId(),
             ]);
 
@@ -76,15 +78,16 @@ class FilmeRepository {
 
         $stmt = $this->pdo->prepare(
             'INSERT INTO filme
-             (nome, genero_id, nivel, usuario_id)
+             (nome, genero_id, nivel, imagem, usuario_id)
              VALUES
-             (:nome, :genero_id, :nivel, :uid)'
+             (:nome, :genero_id, :nivel, :imagem, :uid)'
         );
 
         $stmt->execute([
             ':nome'      => $filme->getNome(),
             ':genero_id' => $filme->getGeneroId(),
             ':nivel'     => $filme->getNivel(),
+            ':imagem'    => $filme->getImagem(),
             ':uid'       => $filme->getUsuarioId(),
         ]);
 

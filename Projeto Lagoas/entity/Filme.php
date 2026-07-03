@@ -7,6 +7,7 @@ class Filme {
     private int    $generoId;    // FK para genero.id
     private ?string $generoNome; // Preenchido via JOIN no Repository (somente leitura)
     private float  $nivel;       // Nota (0 a 10)
+    private ?string $imagem;     // Nome do arquivo salvo em uploads/ (ou null)
     private int    $usuarioId;
 
     public function __construct(array $dados) {
@@ -15,6 +16,7 @@ class Filme {
         $this->generoId   = (int) ($dados['genero_id']  ?? 0);
         $this->generoNome =        $dados['genero_nome'] ?? null;
         $this->nivel      = (float) ($dados['nivel']     ?? 1.0);
+        $this->imagem      =        $dados['imagem']      ?? null;
         $this->usuarioId  = (int) ($dados['usuario_id']  ?? 0);
     }
 
@@ -23,6 +25,7 @@ class Filme {
     public function getGeneroId():   int     { return $this->generoId; }
     public function getGeneroNome(): string  { return $this->generoNome ?? ''; }
     public function getNivel():      float   { return $this->nivel; }
+    public function getImagem():     ?string { return $this->imagem; }
     public function getUsuarioId():  int     { return $this->usuarioId; }
 
     public static function novo(string $nome, int $generoId, float $nivel, int $usuarioId): Filme {
@@ -54,6 +57,14 @@ class Filme {
         $this->nome      = $nome;
         $this->generoId = $generoId;
         $this->nivel     = $nivel;
+    }
+
+    public function alterarImagem(?string $nomeArquivo): void {
+        $this->imagem = $nomeArquivo;
+    }
+
+    public function removerImagem(): void {
+        $this->imagem = null;
     }
 
     public function registrarIdGerado(int $id): void {

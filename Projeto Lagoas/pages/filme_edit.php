@@ -4,6 +4,7 @@ require_once __DIR__ . '/../includes/auth.php';
 require_once __DIR__ . '/../repository/FilmeRepository.php';
 require_once __DIR__ . '/../repository/GeneroRepository.php';
 require_once __DIR__ . '/../repository/TagRepository.php';
+require_once __DIR__ . '/../includes/upload_imagem.php';
 
 $repo       = new FilmeRepository();
 $generoRepo = new GeneroRepository();
@@ -34,9 +35,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $generoId = (int) ($_POST['genero_id'] ?? 0);
     $nivel    = (float) ($_POST['nivel'] ?? 1);
     $tagIdsSelecionadas = array_map('intval', $_POST['tags'] ?? []);
+    $removerImagemMarcado = isset($_POST['remover_imagem']);
 
     try {
         $filme->alterarDados($nome, $generoId, $nivel);
+
+        $nomeArquivoImagem = processarUploadImagem($_FILES['imagem'] ?? []);
+
+        if ($nomeArquivoImagem !== null) {
+            // Enviou uma imagem nova: apaga a antiga e usa a nova
+            removerImagem($filme->getImagem());
+            $filme->alterarImagem($nomeArquivoImagem);
+        } elseif ($removerImagemMarcado) {
+            // Marcou "remover imagem" e não enviou uma nova
+            removerImagem($filme->getImagem());
+            $filme->removerImagem();
+        }
+        // Se nenhuma imagem nova e não marcou remover, mantém a imagem atual
+
         $repo->salvar($filme);
         $repo->salvarTagsDoFilme($filme->getId(), $tagIdsSelecionadas);
 
@@ -60,7 +76,7 @@ require_once __DIR__ . '/../includes/header.php';
 <?php endif; ?>
 
 <div class="form-card">
-  <form method="POST" action="filme_edit.php?id=<?= $filme->getId() ?>">
+  <form method="POST" action="filme_edit.php?id=<?= $filme->getId() ?>" enctype="multipart/form-data">
 
     <div class="form-group">
       <label for="nome">Título</label>
@@ -99,6 +115,34 @@ require_once __DIR__ . '/../includes/header.php';
         value="<?= $nivel ?>"
         required
       />
+    </div>
+
+    <div class="form-group">
+      <label for="imagem">Capa (jpg, png ou webp — até 5 MB)</label>
+
+      <?php if ($filme->getImagem()): ?>
+        <div style="margin-bottom: 12px; display:flex; align-items:center; gap:16px;">
+          <img
+            src="../uploads/<?= htmlspecialchars($filme->getImagem()) ?>"
+            alt="Capa atual"
+            style="width:100px; border-radius: var(--radius); box-shadow: var(--shadow-sm);"
+          />
+          <label style="display:flex; align-items:center; gap:6px; font-weight:500; text-transform:none; letter-spacing:0;">
+            <input type="checkbox" name="remover_imagem" value="1" />
+            Remover imagem atual
+          </label>
+        </div>
+      <?php endif; ?>
+
+      <input
+        type="file"
+        id="imagem"
+        name="imagem"
+        accept=".jpg,.jpeg,.png,.webp,image/jpeg,image/png,image/webp"
+      />
+      <p style="margin-top:6px; color: var(--text-muted); font-size:.8rem;">
+        Enviar uma nova imagem substitui a atual automaticamente.
+      </p>
     </div>
 
     <div class="form-group">

@@ -4,30 +4,20 @@ require_once __DIR__ . '/../includes/auth.php';
 require_once __DIR__ . '/../repository/FilmeRepository.php';
 require_once __DIR__ . '/../repository/GeneroRepository.php';
 require_once __DIR__ . '/../repository/TagRepository.php';
+require_once __DIR__ . '/../includes/upload_imagem.php';
 
 $repo       = new FilmeRepository();
 $generoRepo = new GeneroRepository();
 $tagRepo    = new TagRepository();
 
-$id = (int) ($_GET['id'] ?? 0);
-$filme = $repo->buscarPorId($id, $_SESSION['usuario_id']);
-
-if (!$filme) {
-    header('Location: index.php');
-    exit;
-}
-
 $erro = '';
-$nome = $filme->getNome();
-$generoId = $filme->getGeneroId();
-$nivel = $filme->getNivel();
+$nome = '';
+$generoId = 0;
+$nivel = 1;
+$tagIdsSelecionadas = [];
 
 $generos   = $generoRepo->listarTodos();
 $todasTags = $tagRepo->listarTodas();
-
-// Tags já associadas a este filme (para pré-marcar os checkboxes)
-$tagsDoFilme = $repo->buscarTagsDoFilme($filme->getId());
-$tagIdsSelecionadas = array_map(fn($t) => $t->getId(), $tagsDoFilme);
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $nome     = trim($_POST['nome'] ?? '');
@@ -36,7 +26,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $tagIdsSelecionadas = array_map('intval', $_POST['tags'] ?? []);
 
     try {
-        $filme->alterarDados($nome, $generoId, $nivel);
+        $nomeArquivoImagem = processarUploadImagem($_FILES['imagem'] ?? []);
+
+        $filme = Filme::novo($nome, $generoId, $nivel, $_SESSION['usuario_id']);
+        if ($nomeArquivoImagem !== null) {
+            $filme->alterarImagem($nomeArquivoImagem);
+        }
+
         $repo->salvar($filme);
         $repo->salvarTagsDoFilme($filme->getId(), $tagIdsSelecionadas);
 
@@ -51,7 +47,7 @@ require_once __DIR__ . '/../includes/header.php';
 ?>
 
 <div class="page-header">
-  <h2>Editar Filme ou Série</h2>
+  <h2>Novo Filme ou Série</h2>
   <a href="index.php" class="btn btn-ghost">← Voltar</a>
 </div>
 
@@ -60,7 +56,7 @@ require_once __DIR__ . '/../includes/header.php';
 <?php endif; ?>
 
 <div class="form-card">
-  <form method="POST" action="filme_edit.php?id=<?= $filme->getId() ?>">
+  <form method="POST" action="filme_create.php" enctype="multipart/form-data">
 
     <div class="form-group">
       <label for="nome">Título</label>
@@ -102,6 +98,16 @@ require_once __DIR__ . '/../includes/header.php';
     </div>
 
     <div class="form-group">
+      <label for="imagem">Capa (jpg, png ou webp — até 5 MB)</label>
+      <input
+        type="file"
+        id="imagem"
+        name="imagem"
+        accept=".jpg,.jpeg,.png,.webp,image/jpeg,image/png,image/webp"
+      />
+    </div>
+
+    <div class="form-group">
       <label>Tags</label>
       <?php if (empty($todasTags)): ?>
         <p style="color: var(--text-muted); font-size: .85rem;">
@@ -126,7 +132,7 @@ require_once __DIR__ . '/../includes/header.php';
     </div>
 
     <div class="form-actions">
-      <button type="submit" class="btn btn-primary">Salvar alterações</button>
+      <button type="submit" class="btn btn-primary">Cadastrar Filme ou Série</button>
       <a href="index.php" class="btn btn-ghost">Cancelar</a>
     </div>
 
