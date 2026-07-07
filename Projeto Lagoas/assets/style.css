@@ -381,6 +381,28 @@ a:hover {
   font-weight: 700;
 }
 
+.ordena-link {
+  display: inline-block;
+  margin-left: 4px;
+  padding: 2px 5px;
+  border-radius: 6px;
+  color: var(--text-muted);
+  text-decoration: none;
+  font-size: .8rem;
+  transition: background .15s ease, color .15s ease;
+}
+
+.ordena-link:hover {
+  background: var(--border-light);
+  color: var(--text-main);
+}
+
+.ordena-link.ordena-ativo {
+  background: var(--bg-primary);
+  color: var(--accent);
+  font-weight: 700;
+}
+
 .acoes {
   display: flex;
   gap: 8px;

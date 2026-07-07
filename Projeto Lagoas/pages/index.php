@@ -5,7 +5,12 @@ require_once __DIR__ . '/../includes/auth.php';
 require_once __DIR__ . '/../repository/FilmeRepository.php';
 
 $repo = new FilmeRepository();
-$filmes = $repo->listarPorUsuario($_SESSION['usuario_id']);
+
+// Ordenação por nota (nível): 'asc' = crescente, 'desc' = decrescente (padrão)
+$ordem = $_GET['ordem'] ?? 'desc';
+$ordem = (strtolower($ordem) === 'asc') ? 'asc' : 'desc';
+
+$filmes = $repo->listarPorUsuario($_SESSION['usuario_id'], $ordem);
 
 require_once __DIR__ . '/../includes/header.php';
 ?>
@@ -30,7 +35,19 @@ require_once __DIR__ . '/../includes/header.php';
           <th>Título</th>
           <th>Gênero</th>
           <th>Tags</th>
-          <th>Nota</th>
+          <th>
+            Nota
+            <a
+              href="index.php?ordem=asc"
+              class="ordena-link<?= $ordem === 'asc' ? ' ordena-ativo' : '' ?>"
+              title="Ordenar por nota crescente"
+            >▲</a>
+            <a
+              href="index.php?ordem=desc"
+              class="ordena-link<?= $ordem === 'desc' ? ' ordena-ativo' : '' ?>"
+              title="Ordenar por nota decrescente"
+            >▼</a>
+          </th>
           <th>Ações</th>
         </tr>
       </thead>

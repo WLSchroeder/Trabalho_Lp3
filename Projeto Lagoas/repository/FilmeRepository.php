@@ -18,10 +18,18 @@ class FilmeRepository {
         JOIN genero g ON g.id = f.genero_id
     ';
 
-    /** @return Filme[] */
-    public function listarPorUsuario(int $usuarioId): array {
+    /**
+     * Lista os filmes/séries de um usuário, ordenados pela nota (nivel).
+     *
+     * @param int    $usuarioId
+     * @param string $ordemNota 'asc' para nota crescente, 'desc' para nota decrescente (padrão)
+     * @return Filme[]
+     */
+    public function listarPorUsuario(int $usuarioId, string $ordemNota = 'desc'): array {
+        $ordemNota = strtolower($ordemNota) === 'asc' ? 'ASC' : 'DESC';
+
         $stmt = $this->pdo->prepare(
-            self::SELECT_BASE . ' WHERE f.usuario_id = :uid ORDER BY f.nivel DESC, f.nome ASC'
+            self::SELECT_BASE . " WHERE f.usuario_id = :uid ORDER BY f.nivel {$ordemNota}, f.nome ASC"
         );
         $stmt->execute([':uid' => $usuarioId]);
 
