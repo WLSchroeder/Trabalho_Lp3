@@ -406,28 +406,6 @@ a:hover {
 .acoes {
   display: flex;
   gap: 8px;
-  flex-wrap: wrap;
-}
-
-/* Badge */
-.badge {
-  display: inline-flex;
-  align-items: center;
-  min-height: 26px;
-  padding: 2px 12px;
-  border-radius: 20px;
-  color: var(--text-main);
-  background: var(--bg-primary);
-  font-size: .75rem;
-  font-weight: 700;
-
-
-  text-transform: uppercase;
-}
-
-/* Empty state */
-.empty-state {
-  position: relative;
   max-width: 620px;
   margin: 0 auto;
   padding: 60px 40px;

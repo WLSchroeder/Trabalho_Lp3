@@ -1,4 +1,3 @@
-
 <?php
 
 require_once __DIR__ . '/../includes/auth.php';
@@ -17,12 +16,12 @@ require_once __DIR__ . '/../includes/header.php';
 
 <div class="page-header">
   <h2>Meus Filmes e Séries</h2>
-  <a href="filme_create.php" class="btn btn-primary">+ Novo Filme</a>
+  <a href="filme_create.php" class="btn btn-primary">+ Novo Filme ou Série</a>
 </div>
 
 <?php if (empty($filmes)): ?>
   <div class="empty-state">
-    <p>Você ainda não cadastrou nenhum filme ou série!</p>
+    <p>Nenhum filme ou série cadastrado ainda.</p>
     <a href="filme_create.php" class="btn btn-primary">Cadastrar agora</a>
   </div>
 <?php else: ?>
