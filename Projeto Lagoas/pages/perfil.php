@@ -1,6 +1,6 @@
 
 <?php
-
+require_once __DIR__ . '/../includes/helpers.php';
 require_once __DIR__ . '/../includes/auth.php';
 require_once __DIR__ . '/../repository/UsuarioRepository.php';
 require_once __DIR__ . '/../repository/FilmeRepository.php';
@@ -110,7 +110,12 @@ require_once __DIR__ . '/../includes/header.php';
                 <?php endforeach; ?>
               <?php endif; ?>
             </td>
-            <td>Lv. <?= $filme->getNivel() ?></td>
+            <td>
+  <span
+    class="badge-nota"
+    style="background: <?= corNota($filme->getNivel()) ?>;"
+  ><?= number_format($filme->getNivel(), 1) ?></span>
+</td>
           </tr>
         <?php endforeach; ?>
       </tbody>
