@@ -61,7 +61,7 @@ require_once __DIR__ . '/../includes/header.php';
                 <img
                   src="../uploads/<?= htmlspecialchars($filme->getImagem()) ?>"
                   alt="Capa de <?= htmlspecialchars($filme->getNome()) ?>"
-                  style="width:48px; height:64px; object-fit:cover; border-radius:6px; box-shadow: var(--shadow-sm);"
+                  style="width:120px; height:160px; object-fit:cover; border-radius:6px; box-shadow: var(--shadow-sm);"
                 />
               <?php else: ?>
                 <span style="color: var(--text-muted); font-size:.8rem;">—</span>

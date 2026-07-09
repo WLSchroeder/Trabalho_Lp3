@@ -300,13 +300,11 @@ a:hover {
   background: var(--bg-card);
   border-radius: var(--radius);
   box-shadow: var(--shadow);
-  overflow-x: auto;   /* rolagem horizontal própria, em vez de cortar o conteúdo */
-  overflow-y: hidden; /* mantém os cantos arredondados no eixo vertical */
+  overflow: hidden;
 }
 
 .data-table {
   width: 100%;
-  min-width: 720px;
   border-collapse: collapse;
 }
 
@@ -323,19 +321,19 @@ a:hover {
 }
 
 .data-table td {
-  height: 84px;
-  padding: 12px 24px;
+  height: 301px;   /* ← é essa linha que "estica" o preto (o fundo de cada linha) */
+  padding: 12px 14px;
   border-bottom: 1px solid var(--border-light);
   color: var(--text-main);
   background: var(--bg-card);
   vertical-align: middle;
-  overflow: hidden; /* impede que texto longo empurre a altura da linha */
+  overflow: hidden;
 }
 
 /* Título truncado com reticências em vez de quebrar linha */
 .data-table td strong {
   display: block;
-  max-width: 240px;
+  max-width: 220px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -347,7 +345,7 @@ a:hover {
   flex-wrap: nowrap;
   gap: 6px;
   overflow: hidden;
-  max-width: 280px;
+  max-width: 260px;
 }
 
 .data-table tr:last-child td {
@@ -386,6 +384,11 @@ a:hover {
 }
 
 /* Ações (botões Editar/Excluir dentro da tabela) — largura fixa pra alinhar como coluna */
+.data-table th:last-child,
+.data-table td:last-child {
+  padding-right: 32px;
+}
+
 .acoes {
   display: flex;
   align-items: center;
@@ -592,13 +595,23 @@ a:hover {
     padding: 32px 24px;
   }
 
-  .form-actions,
-  .acoes {
+  .form-actions {
     flex-direction: column;
   }
 
-  .btn,
-  .btn-sm {
+  .form-actions .btn {
     width: 100%;
+  }
+
+  /* Botões de ação da tabela NUNCA empilham — só encolhem, pra não estourar a altura fixa da linha */
+  .acoes {
+    gap: 4px;
+  }
+
+  .acoes .btn-sm {
+    min-width: 0;
+    flex: 1;
+    padding: 0 8px;
+    font-size: .68rem;
   }
 }
