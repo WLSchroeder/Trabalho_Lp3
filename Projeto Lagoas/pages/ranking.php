@@ -59,7 +59,9 @@ require_once __DIR__ . '/../includes/header.php';
           <tr class="<?= $ehVoce ? 'linha-voce' : '' ?>">
             <td><?= $medalha ?? ($posicao + 1) ?></td>
             <td>
-              <strong><?= htmlspecialchars($linha['nome']) ?></strong>
+              <a href="perfil.php?id=<?= $linha['id'] ?>">
+                <strong><?= htmlspecialchars($linha['nome']) ?></strong>
+              </a>
               <?php if ($ehVoce): ?>
                 <span class="badge" style="margin-left:6px;">Você</span>
               <?php endif; ?>

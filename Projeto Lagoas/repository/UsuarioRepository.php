@@ -23,6 +23,18 @@ class UsuarioRepository {
         return null;
     }
 
+    public function buscarPorId(int $id): ?Usuario {
+        $stmt = $this->pdo->prepare('SELECT * FROM usuario WHERE id = :id LIMIT 1');
+        $stmt->execute([':id' => $id]);
+        $dados = $stmt->fetch();
+
+        if ($dados) {
+            return new Usuario($dados);
+        }
+
+        return null;
+    }
+
     /**
      * Lista todos os usuários com a quantidade de filmes/séries que cada
      * um já avaliou (cadastrou), ordenados do que avaliou mais para o
