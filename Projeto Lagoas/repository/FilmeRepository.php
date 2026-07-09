@@ -19,16 +19,17 @@ class FilmeRepository {
     ';
 
     /**
-     * @param int $usuarioId
-     * @param string $ordem 'asc' ou 'desc' (qualquer outro valor cai em 'desc')
+     * Lista os filmes/séries de um usuário, ordenados pela nota (nivel).
+     *
+     * @param int    $usuarioId
+     * @param string $ordemNota 'asc' para nota crescente, 'desc' para nota decrescente (padrão)
      * @return Filme[]
      */
-    public function listarPorUsuario(int $usuarioId, string $ordem = 'desc'): array {
-        // Whitelist de segurança: nunca interpola $ordem direto na query
-        $direcao = (strtolower($ordem) === 'asc') ? 'ASC' : 'DESC';
+    public function listarPorUsuario(int $usuarioId, string $ordemNota = 'desc'): array {
+        $ordemNota = strtolower($ordemNota) === 'asc' ? 'ASC' : 'DESC';
 
         $stmt = $this->pdo->prepare(
-            self::SELECT_BASE . " WHERE f.usuario_id = :uid ORDER BY f.nivel $direcao, f.nome ASC"
+            self::SELECT_BASE . " WHERE f.usuario_id = :uid ORDER BY f.nivel {$ordemNota}, f.nome ASC"
         );
         $stmt->execute([':uid' => $usuarioId]);
 
@@ -38,6 +39,19 @@ class FilmeRepository {
         }
 
         return $lista;
+    }
+
+    /**
+     * Conta quantos filmes/séries o usuário já avaliou (cadastrou).
+     * Usado para calcular o nível de cinefilia do usuário (NivelService).
+     */
+    public function contarPorUsuario(int $usuarioId): int {
+        $stmt = $this->pdo->prepare(
+            'SELECT COUNT(*) FROM filme WHERE usuario_id = :uid'
+        );
+        $stmt->execute([':uid' => $usuarioId]);
+
+        return (int) $stmt->fetchColumn();
     }
 
     public function buscarPorId(int $id, int $usuarioId): ?Filme {

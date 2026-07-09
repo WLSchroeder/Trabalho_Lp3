@@ -1,7 +1,7 @@
+
 <?php
 
 require_once __DIR__ . '/../includes/auth.php';
-require_once __DIR__ . '/../includes/helpers.php';
 require_once __DIR__ . '/../repository/FilmeRepository.php';
 
 $repo = new FilmeRepository();
@@ -12,17 +12,45 @@ $ordem = (strtolower($ordem) === 'asc') ? 'asc' : 'desc';
 
 $filmes = $repo->listarPorUsuario($_SESSION['usuario_id'], $ordem);
 
+require_once __DIR__ . '/../service/NivelService.php';
+$nivelUsuario = NivelService::calcular(count($filmes));
+
 require_once __DIR__ . '/../includes/header.php';
 ?>
 
+<div class="nivel-card">
+  <div class="nivel-card-icone"><?= $nivelUsuario['icone'] ?></div>
+  <div class="nivel-card-info">
+    <div class="nivel-card-topo">
+      <span class="nivel-card-nivel">Nível <?= $nivelUsuario['nivel'] ?></span>
+      <span class="nivel-card-titulo"><?= htmlspecialchars($nivelUsuario['titulo']) ?></span>
+    </div>
+
+    <?php if ($nivelUsuario['nivelMaximo']): ?>
+      <p class="nivel-card-legenda">
+        Você atingiu o nível máximo com <?= $nivelUsuario['totalAvaliados'] ?> filme(s)/série(s) avaliado(s). Parabéns, lenda! 🌟
+      </p>
+    <?php else: ?>
+      <div class="nivel-progresso-barra">
+        <div class="nivel-progresso-preenchido" style="width: <?= $nivelUsuario['progresso'] ?>%;"></div>
+      </div>
+      <p class="nivel-card-legenda">
+        <?= $nivelUsuario['totalAvaliados'] ?> avaliado(s) —
+        faltam <strong><?= $nivelUsuario['faltamParaProximo'] ?></strong>
+        para o nível <?= $nivelUsuario['nivel'] + 1 ?> (<?= htmlspecialchars($nivelUsuario['proximoTitulo']) ?>)
+      </p>
+    <?php endif; ?>
+  </div>
+</div>
+
 <div class="page-header">
   <h2>Meus Filmes e Séries</h2>
-  <a href="filme_create.php" class="btn btn-primary">+ Novo Filme ou Série</a>
+  <a href="filme_create.php" class="btn btn-primary">+ Novo Filme</a>
 </div>
 
 <?php if (empty($filmes)): ?>
   <div class="empty-state">
-    <p>Nenhum filme ou série cadastrado ainda.</p>
+    <p>Você ainda não cadastrou nenhum filme ou série!</p>
     <a href="filme_create.php" class="btn btn-primary">Cadastrar agora</a>
   </div>
 <?php else: ?>
@@ -61,7 +89,7 @@ require_once __DIR__ . '/../includes/header.php';
                 <img
                   src="../uploads/<?= htmlspecialchars($filme->getImagem()) ?>"
                   alt="Capa de <?= htmlspecialchars($filme->getNome()) ?>"
-                  style="width:120px; height:160px; object-fit:cover; border-radius:6px; box-shadow: var(--shadow-sm);"
+                  style="width:48px; height:64px; object-fit:cover; border-radius:6px; box-shadow: var(--shadow-sm);"
                 />
               <?php else: ?>
                 <span style="color: var(--text-muted); font-size:.8rem;">—</span>
@@ -73,27 +101,12 @@ require_once __DIR__ . '/../includes/header.php';
               <?php if (empty($tags)): ?>
                 <span style="color: var(--text-muted); font-size:.8rem;">—</span>
               <?php else: ?>
-                <div class="tags-linha">
-                  <?php foreach ($tags as $tag): ?>
-                    <span class="badge" style="white-space:nowrap;"><?= htmlspecialchars($tag->getNome()) ?></span>
-                  <?php endforeach; ?>
-                </div>
+                <?php foreach ($tags as $tag): ?>
+                  <span class="badge" style="margin: 2px;"><?= htmlspecialchars($tag->getNome()) ?></span>
+                <?php endforeach; ?>
               <?php endif; ?>
             </td>
-            <td>
-              <span
-                style="
-                  background: <?= corNota($filme->getNivel()) ?>;
-                  color: #fff;
-                  font-weight: 700;
-                  padding: 4px 12px;
-                  border-radius: 6px;
-                  display: inline-block;
-                  min-width: 38px;
-                  text-align: center;
-                "
-              ><?= number_format($filme->getNivel(), 1) ?></span>
-            </td>
+            <td>Lv. <?= $filme->getNivel() ?></td>
             <td class="acoes">
               <a href="filme_edit.php?id=<?= $filme->getId() ?>" class="btn btn-sm btn-editar">Editar</a>
               <a href="filme_delete.php?id=<?= $filme->getId() ?>" class="btn btn-sm btn-excluir">Excluir</a>
