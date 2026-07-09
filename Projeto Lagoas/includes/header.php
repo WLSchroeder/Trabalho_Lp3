@@ -25,6 +25,7 @@
       <a href="../pages/index.php">Meus Filmes e Séries</a>
       <a href="../pages/filme_create.php">+ Novo Filme ou Série </a>
       <a href="../pages/tag_list.php">Tags</a>
+      <a href="../pages/ranking.php">Ranking</a>
     </nav>
 
     <div class="header-user">

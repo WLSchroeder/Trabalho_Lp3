@@ -23,6 +23,34 @@ class UsuarioRepository {
         return null;
     }
 
+    /**
+     * Lista todos os usuários com a quantidade de filmes/séries que cada
+     * um já avaliou (cadastrou), ordenados do que avaliou mais para o
+     * que avaliou menos. Usado para montar o ranking de níveis.
+     *
+     * @return array<int, array{id:int, nome:string, totalAvaliados:int}>
+     */
+    public function listarRanking(): array {
+        $stmt = $this->pdo->query(
+            'SELECT u.id, u.nome, COUNT(f.id) AS total_avaliados
+             FROM usuario u
+             LEFT JOIN filme f ON f.usuario_id = u.id
+             GROUP BY u.id, u.nome
+             ORDER BY total_avaliados DESC, u.nome ASC'
+        );
+
+        $lista = [];
+        foreach ($stmt->fetchAll() as $linha) {
+            $lista[] = [
+                'id'             => (int) $linha['id'],
+                'nome'           => $linha['nome'],
+                'totalAvaliados' => (int) $linha['total_avaliados'],
+            ];
+        }
+
+        return $lista;
+    }
+
     public function existeComEmail(string $email): bool {
         $stmt = $this->pdo->prepare('SELECT id FROM usuario WHERE email = :email LIMIT 1');
         $stmt->execute([':email' => $email]);
