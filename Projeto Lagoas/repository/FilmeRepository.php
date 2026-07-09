@@ -41,6 +41,19 @@ class FilmeRepository {
         return $lista;
     }
 
+    /**
+     * Conta quantos filmes/séries o usuário já avaliou (cadastrou).
+     * Usado para calcular o nível de cinefilia do usuário (NivelService).
+     */
+    public function contarPorUsuario(int $usuarioId): int {
+        $stmt = $this->pdo->prepare(
+            'SELECT COUNT(*) FROM filme WHERE usuario_id = :uid'
+        );
+        $stmt->execute([':uid' => $usuarioId]);
+
+        return (int) $stmt->fetchColumn();
+    }
+
     public function buscarPorId(int $id, int $usuarioId): ?Filme {
         $stmt = $this->pdo->prepare(
             self::SELECT_BASE . ' WHERE f.id = :id AND f.usuario_id = :uid LIMIT 1'

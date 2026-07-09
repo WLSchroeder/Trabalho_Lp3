@@ -176,6 +176,21 @@ a:hover {
 
 }
 
+.badge-nivel {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--bg-primary);
+  border: 1px solid rgba(24, 25, 31, 0.12);
+  color: var(--text-main);
+  font-size: .75rem;
+  font-weight: 700;
+  padding: 6px 12px;
+  border-radius: 20px;
+  white-space: nowrap;
+  cursor: default;
+}
+
 /* Layout */
 .container {
   position: relative;
@@ -201,6 +216,73 @@ a:hover {
   font-size: .85rem;
   font-weight: 500;
 
+}
+
+/* Card de nível do usuário */
+.nivel-card {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  background: var(--bg-card);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-sm);
+  padding: 20px 24px;
+  margin-bottom: 28px;
+}
+
+.nivel-card-icone {
+  font-size: 2.6rem;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.nivel-card-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.nivel-card-topo {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 8px;
+}
+
+.nivel-card-nivel {
+  font-size: 1rem;
+  font-weight: 800;
+  color: var(--text-main);
+}
+
+.nivel-card-titulo {
+  font-size: .85rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: .05em;
+}
+
+.nivel-progresso-barra {
+  width: 100%;
+  height: 10px;
+  border-radius: 999px;
+  background: var(--border-light);
+  overflow: hidden;
+  margin-bottom: 8px;
+}
+
+.nivel-progresso-preenchido {
+  height: 100%;
+  border-radius: 999px;
+  background: var(--bg-primary);
+  background-image: linear-gradient(90deg, var(--bg-primary), #ffe680);
+  transition: width .3s ease;
+}
+
+.nivel-card-legenda {
+  font-size: .85rem;
+  color: var(--text-muted);
 }
 
 /* Page header */
@@ -611,6 +693,7 @@ a:hover {
     width: 100%;
     justify-content: center;
     gap: 16px;
+    flex-wrap: wrap;
   }
 
   .container {
