@@ -1,7 +1,7 @@
 /*
 PokéCRUD - Clean & Yellow Minimalist Theme
 ------------------------------------------------- */
-@import url('https://googleapis.com');
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
 
 *, *::before, *::after {
   box-sizing: border-box;
@@ -67,6 +67,16 @@ a:hover {
 ::selection {
   background: var(--text-main);
   color: var(--bg-primary);
+}
+
+/* Foco de teclado visível (acessibilidade) */
+a:focus-visible,
+button:focus-visible,
+.btn:focus-visible,
+input:focus-visible,
+select:focus-visible {
+  outline: 3px solid var(--text-main);
+  outline-offset: 2px;
 }
 
 /* Header */
@@ -188,7 +198,7 @@ a:hover {
   padding: 6px 12px;
   border-radius: 20px;
   white-space: nowrap;
-  cursor: default;
+  cursor: help;
 }
 .badge-nota {
   display: inline-flex;
@@ -198,6 +208,7 @@ a:hover {
   height: 28px;
   padding: 0 10px;
   border-radius: 6px;
+  background: var(--text-muted); /* cor padrão de segurança, caso nenhuma variante de cor seja aplicada */
   color: #fff;
   font-weight: 700;
   line-height: 1;
@@ -429,7 +440,9 @@ a:hover {
   background: var(--bg-card);
   border-radius: var(--radius);
   box-shadow: var(--shadow);
-  overflow: hidden; /* Garante os cantos arredondados na tabela */
+  overflow-x: auto;  /* rola na horizontal em telas pequenas, em vez de cortar colunas */
+  overflow-y: hidden;
+  -webkit-overflow-scrolling: touch;
 }
 
 .data-table {
@@ -463,6 +476,10 @@ a:hover {
 
 .data-table tr:last-child td {
   border-bottom: none;
+}
+
+.data-table tbody tr:nth-child(even) td {
+  background: #fafafa;
 }
 
 .data-table tr:hover td {
