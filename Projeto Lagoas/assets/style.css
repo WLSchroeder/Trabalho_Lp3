@@ -16,7 +16,7 @@ PokéCRUD - Clean & Yellow Minimalist Theme
   --text-muted: #575a65;       /* Cinza agradável para textos secundários */
   --accent: #18191f;           /* Tom de destaque principal */
   --border-light: #e6e8ec;     /* Linhas divisórias extremamente sutis */
-
+  
   /* Cores de status suavizadas para o tema clean */
   --green: #4ade80;
   --green-soft: #f0fdf4;
@@ -26,8 +26,8 @@ PokéCRUD - Clean & Yellow Minimalist Theme
   --blue-soft: #eff6ff;
 
   --radius: 12px;             /* Cantos bem arredondados e amigáveis */
-  --shadow: 0 8px 20px -6px rgba(24, 25, 31, 0.10), 0 4px 8px -4px rgba(24, 25, 31, 0.06);
-  --shadow-sm: 0 2px 6px -1px rgba(24, 25, 31, 0.06);
+  --shadow: 0 10px 25px -5px rgba(24, 25, 31, 0.08), 0 8px 10px -6px rgba(24, 25, 31, 0.08);
+  --shadow-sm: 0 4px 6px -1px rgba(24, 25, 31, 0.05);
 
 }
 
@@ -44,6 +44,10 @@ body {
   color: var(--text-main);
   background-color: var(--bg-primary); /* Fundo totalmente amarelo como a imagem */
   font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+
+
+
+
   font-size: 15px;
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
@@ -82,6 +86,13 @@ a:hover {
   display: block;
   height: 4px;
   background: linear-gradient(90deg, var(--text-main) 70%, var(--bg-primary) 70%);
+
+
+
+
+
+
+
 }
 
 .header-inner {
@@ -106,10 +117,19 @@ a:hover {
   padding: 6px 16px;
   transform: rotate(-3deg);
   border-radius: 4px;
+
+
+
+
+
+
+
+
 }
 
 .logo:hover {
   transform: rotate(-3deg) scale(1.03);
+
 }
 
 .nav {
@@ -122,6 +142,7 @@ a:hover {
 .nav a,
 .btn-logout {
   color: var(--text-muted);
+
   background: transparent;
   border: none;
   text-transform: uppercase;
@@ -137,6 +158,7 @@ a:hover {
 .btn-logout:hover {
   color: var(--text-main);
   background: rgba(24, 25, 31, 0.05);
+
 }
 
 .header-user {
@@ -149,7 +171,9 @@ a:hover {
 .user-name {
   color: var(--text-main);
   font-size: .9rem;
+
   font-weight: 700;
+
 }
 
 /* Layout */
@@ -176,6 +200,7 @@ a:hover {
   text-align: center;
   font-size: .85rem;
   font-weight: 500;
+
 }
 
 /* Page header */
@@ -186,6 +211,7 @@ a:hover {
   gap: 18px;
   margin-bottom: 32px;
   padding-bottom: 16px;
+
 }
 
 .page-header h2 {
@@ -193,6 +219,8 @@ a:hover {
   line-height: 1.2;
   font-weight: 800;
   letter-spacing: -0.02em;
+
+
 }
 
 /* Buttons (Estilo Clean como o botão ME AVISE) */
@@ -210,19 +238,24 @@ a:hover {
   box-shadow: var(--shadow-sm);
   font-size: .85rem;
   font-weight: 700;
+
   text-transform: uppercase;
   letter-spacing: .04em;
   cursor: pointer;
   transition: all 0.2s ease;
+
 }
 
 .btn:hover {
   transform: translateY(-2px);
   box-shadow: var(--shadow);
+
+
 }
 
 .btn:active {
   transform: translateY(0);
+
 }
 
 .btn-primary {
@@ -232,6 +265,7 @@ a:hover {
 
 .btn-primary:hover {
   background: #2b2d38;
+
 }
 
 .btn-editar {
@@ -273,6 +307,7 @@ a:hover {
   min-height: 38px;
   padding: 0 16px;
   font-size: .78rem;
+
 }
 
 /* Alerts */
@@ -283,6 +318,7 @@ a:hover {
   border-radius: var(--radius);
   font-weight: 600;
   box-shadow: var(--shadow-sm);
+
 }
 
 .alert-erro {
@@ -300,8 +336,7 @@ a:hover {
   background: var(--bg-card);
   border-radius: var(--radius);
   box-shadow: var(--shadow);
-  overflow-x: auto;   /* rolagem horizontal própria, em vez de cortar o conteúdo */
-  overflow-y: hidden; /* mantém os cantos arredondados no eixo vertical */
+  overflow: hidden; /* Garante os cantos arredondados na tabela */
 }
 
 .data-table {
@@ -323,31 +358,14 @@ a:hover {
 }
 
 .data-table td {
-  height: 84px;
-  padding: 12px 24px;
+  padding: 18px 24px;
   border-bottom: 1px solid var(--border-light);
   color: var(--text-main);
   background: var(--bg-card);
-  vertical-align: middle;
-  overflow: hidden; /* impede que texto longo empurre a altura da linha */
-}
 
-/* Título truncado com reticências em vez de quebrar linha */
-.data-table td strong {
-  display: block;
-  max-width: 240px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
 
-/* Grupo de tags: nunca quebra linha, corta o que não couber */
-.tags-linha {
-  display: flex;
-  flex-wrap: nowrap;
-  gap: 6px;
-  overflow: hidden;
-  max-width: 280px;
+
+
 }
 
 .data-table tr:last-child td {
@@ -385,19 +403,31 @@ a:hover {
   font-weight: 700;
 }
 
-/* Ações (botões Editar/Excluir dentro da tabela) — largura fixa pra alinhar como coluna */
 .acoes {
   display: flex;
-  align-items: center;
   gap: 8px;
+  flex-wrap: wrap;
 }
 
-.acoes .btn-sm {
-  min-width: 92px;
+/* Badge */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  min-height: 26px;
+  padding: 2px 12px;
+  border-radius: 20px;
+  color: var(--text-main);
+  background: var(--bg-primary);
+  font-size: .75rem;
+  font-weight: 700;
+
+
+  text-transform: uppercase;
 }
 
-/* Empty state — a caixa tracejada fica só aqui, quando não há nada cadastrado */
+/* Empty state */
 .empty-state {
+  position: relative;
   max-width: 620px;
   margin: 0 auto;
   padding: 60px 40px;
@@ -405,7 +435,7 @@ a:hover {
   background: var(--bg-card);
   border: 2px dashed var(--border-light);
   border-radius: var(--radius);
-  box-shadow: var(--shadow-sm);
+  box-shadow: var(--shadow);
   text-align: center;
 }
 
@@ -414,6 +444,7 @@ a:hover {
   margin: 0 auto 24px;
   color: var(--text-muted);
   font-size: 1.1rem;
+
 }
 
 /* Forms (Inspirado no campo de input clean) */
@@ -442,6 +473,7 @@ a:hover {
   color: var(--text-main);
   font-size: .8rem;
   font-weight: 700;
+
   text-transform: uppercase;
   letter-spacing: .04em;
 }
@@ -519,6 +551,10 @@ a:hover {
   justify-content: center;
   padding: 24px;
   background-color: var(--bg-primary);
+
+
+
+
 }
 
 .login-card {
@@ -532,6 +568,7 @@ a:hover {
   color: var(--text-main);
   font-weight: 800;
   font-size: 2.2rem;
+
   text-align: center;
   letter-spacing: -0.03em;
 }
@@ -590,6 +627,7 @@ a:hover {
   .confirm-card,
   .login-card {
     padding: 32px 24px;
+
   }
 
   .form-actions,
@@ -601,4 +639,5 @@ a:hover {
   .btn-sm {
     width: 100%;
   }
+
 }
