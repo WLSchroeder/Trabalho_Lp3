@@ -12,36 +12,8 @@ $ordem = (strtolower($ordem) === 'asc') ? 'asc' : 'desc';
 
 $filmes = $repo->listarPorUsuario($_SESSION['usuario_id'], $ordem);
 
-require_once __DIR__ . '/../service/NivelService.php';
-$nivelUsuario = NivelService::calcular(count($filmes));
-
 require_once __DIR__ . '/../includes/header.php';
 ?>
-
-<div class="nivel-card">
-  <div class="nivel-card-icone"><?= $nivelUsuario['icone'] ?></div>
-  <div class="nivel-card-info">
-    <div class="nivel-card-topo">
-      <span class="nivel-card-nivel">Nível <?= $nivelUsuario['nivel'] ?></span>
-      <span class="nivel-card-titulo"><?= htmlspecialchars($nivelUsuario['titulo']) ?></span>
-    </div>
-
-    <?php if ($nivelUsuario['nivelMaximo']): ?>
-      <p class="nivel-card-legenda">
-        Você atingiu o nível máximo com <?= $nivelUsuario['totalAvaliados'] ?> filme(s)/série(s) avaliado(s). Parabéns, lenda! 🌟
-      </p>
-    <?php else: ?>
-      <div class="nivel-progresso-barra">
-        <div class="nivel-progresso-preenchido" style="width: <?= $nivelUsuario['progresso'] ?>%;"></div>
-      </div>
-      <p class="nivel-card-legenda">
-        <?= $nivelUsuario['totalAvaliados'] ?> avaliado(s) —
-        faltam <strong><?= $nivelUsuario['faltamParaProximo'] ?></strong>
-        para o nível <?= $nivelUsuario['nivel'] + 1 ?> (<?= htmlspecialchars($nivelUsuario['proximoTitulo']) ?>)
-      </p>
-    <?php endif; ?>
-  </div>
-</div>
 
 <div class="page-header">
   <h2>Meus Filmes e Séries</h2>

@@ -8,15 +8,6 @@
 </head>
 <body>
 
-<?php
-  require_once __DIR__ . '/../repository/FilmeRepository.php';
-  require_once __DIR__ . '/../service/NivelService.php';
-
-  $repoFilmeNivel = new FilmeRepository();
-  $totalAvaliadosHeader = $repoFilmeNivel->contarPorUsuario($_SESSION['usuario_id']);
-  $nivelUsuarioHeader = NivelService::calcular($totalAvaliadosHeader);
-?>
-
 <header class="site-header">
   <div class="header-inner">
     <a href="../pages/index.php" class="logo">CineRank</a>
@@ -31,15 +22,6 @@
       <?php
         $nomeUser = $_SESSION['usuario_nome'] ?? 'Usuário';
       ?>
-      <span
-        class="badge-nivel"
-        title="<?= $nivelUsuarioHeader['nivelMaximo']
-          ? 'Nível máximo alcançado!'
-          : ($nivelUsuarioHeader['faltamParaProximo'] . ' filme(s) para o próximo nível: ' . htmlspecialchars($nivelUsuarioHeader['proximoTitulo'])) ?>"
-      >
-        <?= $nivelUsuarioHeader['icone'] ?>
-        Nível <?= $nivelUsuarioHeader['nivel'] ?> · <?= htmlspecialchars($nivelUsuarioHeader['titulo']) ?>
-      </span>
       <span class="user-name">
         <?= htmlspecialchars($nomeUser) ?>
       </span>
