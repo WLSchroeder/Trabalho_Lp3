@@ -87,7 +87,7 @@ require_once __DIR__ . '/../includes/header.php';
         type="text"
         id="nome"
         name="nome"
-        placeholder="Ex: Charmander"
+        placeholder="Ex: Avatar"
         value="<?= htmlspecialchars($nome) ?>"
         required
       />
