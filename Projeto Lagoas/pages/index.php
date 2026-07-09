@@ -1,7 +1,7 @@
-
 <?php
 
 require_once __DIR__ . '/../includes/auth.php';
+require_once __DIR__ . '/../includes/helpers.php';
 require_once __DIR__ . '/../repository/FilmeRepository.php';
 
 $repo = new FilmeRepository();
@@ -45,12 +45,12 @@ require_once __DIR__ . '/../includes/header.php';
 
 <div class="page-header">
   <h2>Meus Filmes e Séries</h2>
-  <a href="filme_create.php" class="btn btn-primary">+ Novo Filme</a>
+  <a href="filme_create.php" class="btn btn-primary">+ Novo Filme ou Série</a>
 </div>
 
 <?php if (empty($filmes)): ?>
   <div class="empty-state">
-    <p>Você ainda não cadastrou nenhum filme ou série!</p>
+    <p>Nenhum filme ou série cadastrado ainda.</p>
     <a href="filme_create.php" class="btn btn-primary">Cadastrar agora</a>
   </div>
 <?php else: ?>
@@ -101,12 +101,27 @@ require_once __DIR__ . '/../includes/header.php';
               <?php if (empty($tags)): ?>
                 <span style="color: var(--text-muted); font-size:.8rem;">—</span>
               <?php else: ?>
-                <?php foreach ($tags as $tag): ?>
-                  <span class="badge" style="margin: 2px;"><?= htmlspecialchars($tag->getNome()) ?></span>
-                <?php endforeach; ?>
+                <div class="tags-linha">
+                  <?php foreach ($tags as $tag): ?>
+                    <span class="badge" style="white-space:nowrap;"><?= htmlspecialchars($tag->getNome()) ?></span>
+                  <?php endforeach; ?>
+                </div>
               <?php endif; ?>
             </td>
-            <td>Lv. <?= $filme->getNivel() ?></td>
+            <td>
+              <span
+                style="
+                  background: <?= corNota($filme->getNivel()) ?>;
+                  color: #fff;
+                  font-weight: 700;
+                  padding: 4px 12px;
+                  border-radius: 6px;
+                  display: inline-block;
+                  min-width: 38px;
+                  text-align: center;
+                "
+              ><?= number_format($filme->getNivel(), 1) ?></span>
+            </td>
             <td class="acoes">
               <a href="filme_edit.php?id=<?= $filme->getId() ?>" class="btn btn-sm btn-editar">Editar</a>
               <a href="filme_delete.php?id=<?= $filme->getId() ?>" class="btn btn-sm btn-excluir">Excluir</a>
