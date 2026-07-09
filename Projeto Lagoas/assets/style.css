@@ -190,7 +190,18 @@ a:hover {
   white-space: nowrap;
   cursor: default;
 }
-
+.badge-nota {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 38px;
+  height: 28px;
+  padding: 0 10px;
+  border-radius: 6px;
+  color: #fff;
+  font-weight: 700;
+  line-height: 1;
+}
 /* Layout */
 .container {
   position: relative;

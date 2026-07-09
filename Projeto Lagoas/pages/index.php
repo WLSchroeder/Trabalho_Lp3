@@ -1,7 +1,7 @@
-
 <?php
 
 require_once __DIR__ . '/../includes/auth.php';
+require_once __DIR__ . '/../includes/helpers.php';
 require_once __DIR__ . '/../repository/FilmeRepository.php';
 
 $repo = new FilmeRepository();
@@ -89,7 +89,7 @@ require_once __DIR__ . '/../includes/header.php';
                 <img
                   src="../uploads/<?= htmlspecialchars($filme->getImagem()) ?>"
                   alt="Capa de <?= htmlspecialchars($filme->getNome()) ?>"
-                  style="width:48px; height:64px; object-fit:cover; border-radius:6px; box-shadow: var(--shadow-sm);"
+                  style="width:64px; height:86px; object-fit:cover; border-radius:6px; box-shadow: var(--shadow-sm); display:block;"
                 />
               <?php else: ?>
                 <span style="color: var(--text-muted); font-size:.8rem;">—</span>
@@ -101,12 +101,19 @@ require_once __DIR__ . '/../includes/header.php';
               <?php if (empty($tags)): ?>
                 <span style="color: var(--text-muted); font-size:.8rem;">—</span>
               <?php else: ?>
-                <?php foreach ($tags as $tag): ?>
-                  <span class="badge" style="margin: 2px;"><?= htmlspecialchars($tag->getNome()) ?></span>
-                <?php endforeach; ?>
+                <div class="tags-linha">
+                  <?php foreach ($tags as $tag): ?>
+                    <span class="badge" style="white-space:nowrap;"><?= htmlspecialchars($tag->getNome()) ?></span>
+                  <?php endforeach; ?>
+                </div>
               <?php endif; ?>
             </td>
-            <td>Lv. <?= $filme->getNivel() ?></td>
+            <td>
+              <span
+                class="badge-nota"
+                style="background: <?= corNota($filme->getNivel()) ?>;"
+              ><?= number_format($filme->getNivel(), 1) ?></span>
+            </td>
             <td class="acoes">
               <a href="filme_edit.php?id=<?= $filme->getId() ?>" class="btn btn-sm btn-editar">Editar</a>
               <a href="filme_delete.php?id=<?= $filme->getId() ?>" class="btn btn-sm btn-excluir">Excluir</a>
