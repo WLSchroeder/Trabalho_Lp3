@@ -19,17 +19,16 @@ class FilmeRepository {
     ';
 
     /**
-     * Lista os filmes/séries de um usuário, ordenados pela nota (nivel).
-     *
-     * @param int    $usuarioId
-     * @param string $ordemNota 'asc' para nota crescente, 'desc' para nota decrescente (padrão)
+     * @param int $usuarioId
+     * @param string $ordem 'asc' ou 'desc' (qualquer outro valor cai em 'desc')
      * @return Filme[]
      */
-    public function listarPorUsuario(int $usuarioId, string $ordemNota = 'desc'): array {
-        $ordemNota = strtolower($ordemNota) === 'asc' ? 'ASC' : 'DESC';
+    public function listarPorUsuario(int $usuarioId, string $ordem = 'desc'): array {
+        // Whitelist de segurança: nunca interpola $ordem direto na query
+        $direcao = (strtolower($ordem) === 'asc') ? 'ASC' : 'DESC';
 
         $stmt = $this->pdo->prepare(
-            self::SELECT_BASE . " WHERE f.usuario_id = :uid ORDER BY f.nivel {$ordemNota}, f.nome ASC"
+            self::SELECT_BASE . " WHERE f.usuario_id = :uid ORDER BY f.nivel $direcao, f.nome ASC"
         );
         $stmt->execute([':uid' => $usuarioId]);
 

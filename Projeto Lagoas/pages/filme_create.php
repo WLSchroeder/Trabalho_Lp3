@@ -28,6 +28,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     try {
         $nomeArquivoImagem = processarUploadImagem($_FILES['imagem'] ?? []);
 
+        // Se o usuário não enviou uma imagem manualmente, usa o pôster
+        // que já foi baixado do OMDb (guardado no campo escondido imagem_omdb)
+        if ($nomeArquivoImagem === null && !empty($_POST['imagem_omdb'])) {
+            $nomeArquivoImagem = basename($_POST['imagem_omdb']); // sanitiza o nome
+        }
+
         $filme = Filme::novo($nome, $generoId, $nivel, $_SESSION['usuario_id']);
         if ($nomeArquivoImagem !== null) {
             $filme->alterarImagem($nomeArquivoImagem);
@@ -56,7 +62,24 @@ require_once __DIR__ . '/../includes/header.php';
 <?php endif; ?>
 
 <div class="form-card">
+
+  <div class="form-group">
+    <label for="omdb_busca">Buscar no OMDb (preenche o título e o pôster automaticamente)</label>
+    <div style="display:flex; gap:8px;">
+      <input type="text" id="omdb_busca" placeholder="Digite o título e busque..." />
+      <button type="button" id="omdb_busca_btn" class="btn btn-ghost">Buscar</button>
+    </div>
+    <div id="omdb_resultados" style="margin-top:8px; display:flex; flex-direction:column; gap:4px;"></div>
+  </div>
+
+  <div id="omdb_preview" style="display:none; align-items:center; gap:12px; margin-bottom:16px;">
+    <img id="omdb_preview_img" src="" alt="Pôster selecionado"
+         style="width:80px; border-radius: var(--radius); box-shadow: var(--shadow-sm);" />
+    <span id="omdb_preview_texto" style="color: var(--text-muted); font-size:.85rem;"></span>
+  </div>
+
   <form method="POST" action="filme_create.php" enctype="multipart/form-data">
+    <input type="hidden" id="imagem_omdb" name="imagem_omdb" value="" />
 
     <div class="form-group">
       <label for="nome">Título</label>
@@ -105,6 +128,10 @@ require_once __DIR__ . '/../includes/header.php';
         name="imagem"
         accept=".jpg,.jpeg,.png,.webp,image/jpeg,image/png,image/webp"
       />
+      <p style="margin-top:6px; color: var(--text-muted); font-size:.8rem;">
+        Se você buscar um filme no OMDb acima, o pôster já vem preenchido — só envie um
+        arquivo aqui se quiser substituir por outra imagem.
+      </p>
     </div>
 
     <div class="form-group">
@@ -138,5 +165,80 @@ require_once __DIR__ . '/../includes/header.php';
 
   </form>
 </div>
+
+<script>
+document.getElementById('omdb_busca_btn').addEventListener('click', function () {
+    var termo = document.getElementById('omdb_busca').value.trim();
+    var container = document.getElementById('omdb_resultados');
+    container.innerHTML = '';
+
+    if (termo === '') {
+        return;
+    }
+
+    fetch('omdb_buscar.php?termo=' + encodeURIComponent(termo))
+        .then(function (resp) { return resp.json(); })
+        .then(function (lista) {
+            if (lista.length === 0) {
+                container.innerHTML = '<p style="color: var(--text-muted); font-size:.85rem;">Nenhum resultado encontrado.</p>';
+                return;
+            }
+
+            lista.forEach(function (item) {
+                var linha = document.createElement('div');
+                linha.style.cssText = 'display:flex; align-items:center; gap:10px; cursor:pointer; padding:6px; border-radius:6px;';
+                linha.onmouseover = function () { linha.style.background = '#f5f5f5'; };
+                linha.onmouseout  = function () { linha.style.background = 'transparent'; };
+
+                var posterSrc = (item.poster && item.poster !== 'N/A') ? item.poster : '';
+                linha.innerHTML =
+                    (posterSrc ? '<img src="' + posterSrc + '" style="width:40px; border-radius:4px;">' : '') +
+                    '<span>' + item.titulo + ' (' + item.ano + ')</span>';
+
+                linha.addEventListener('click', function () {
+                    selecionarFilmeOmdb(item.imdbID);
+                    document.getElementById('omdb_busca').value = item.titulo;
+                    container.innerHTML = '';
+                });
+
+                container.appendChild(linha);
+            });
+        })
+        .catch(function () {
+            container.innerHTML = '<p style="color: var(--text-muted); font-size:.85rem;">Erro ao buscar. Tente novamente.</p>';
+        });
+});
+
+function selecionarFilmeOmdb(imdbId) {
+    fetch('omdb_selecionar.php?imdb_id=' + encodeURIComponent(imdbId))
+        .then(function (resp) { return resp.json(); })
+        .then(function (dados) {
+            if (dados.erro) {
+                alert(dados.erro);
+                return;
+            }
+
+            document.getElementById('nome').value = dados.nome;
+            document.getElementById('imagem_omdb').value = dados.imagem || '';
+
+            var preview = document.getElementById('omdb_preview');
+            var previewImg = document.getElementById('omdb_preview_img');
+            var previewTexto = document.getElementById('omdb_preview_texto');
+
+            if (dados.imagem) {
+                previewImg.src = '../uploads/' + dados.imagem;
+                previewTexto.textContent = 'Pôster importado automaticamente do OMDb.';
+                preview.style.display = 'flex';
+            } else {
+                previewTexto.textContent = 'Este título não tem pôster disponível no OMDb.';
+                preview.style.display = 'flex';
+                previewImg.src = '';
+            }
+        })
+        .catch(function () {
+            alert('Erro ao buscar detalhes do filme.');
+        });
+}
+</script>
 
 <?php require_once __DIR__ . '/../includes/footer.php'; ?>
